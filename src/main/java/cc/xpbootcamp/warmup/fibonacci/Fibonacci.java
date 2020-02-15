@@ -2,7 +2,8 @@ package cc.xpbootcamp.warmup.fibonacci;
 
 public class Fibonacci {
 
-  public int calculate(int index) {
+
+  public long calculate(int index) {
 
     if (index <3){
       return 1;
