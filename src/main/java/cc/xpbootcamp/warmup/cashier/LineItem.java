@@ -12,6 +12,7 @@ public class LineItem {
 		this.qty = qty;
 	}
 
+
 	public String getDescription() {
 		return desc;
 	}
@@ -27,4 +28,12 @@ public class LineItem {
     double totalAmount() {
         return price * qty;
     }
+
+	String getLineInfo() {
+			return getDescription() + '\t' + getPrice() + '\t' + getQuantity() + '\t' + totalAmount() + '\n';
+	}
+
+	double getSalesTax() {
+			return totalAmount() * .10;
+	}
 }
