@@ -3,57 +3,68 @@ package cc.xpbootcamp.warmup.cashier;
 import java.util.List;
 
 public class Order {
-    String cName;
-    String addr;
-    List<LineItem> lineItemList;
 
-   private double totSalesTx = 0d;
-   private double tot = 0d;
-   private String lineInfos ="";
-    public Order(String cName, String addr, List<LineItem> lineItemList) {
-        this.cName = cName;
-        this.addr = addr;
-        this.lineItemList = lineItemList;
-    }
+  String cName;
+  String addr;
+  List<LineItem> lineItemList;
 
-    public String getCustomerName() {
-        return cName;
-    }
+  private double totSalesTx = 0d;
+  private double tot = 0d;
+  private String lineInfos = "";
 
-    public String getCustomerAddress() {
-        return addr;
-    }
+  public Order(String cName, String addr, List<LineItem> lineItemList) {
+    this.cName = cName;
+    this.addr = addr;
+    this.lineItemList = lineItemList;
+  }
 
-    public List<LineItem> getLineItems() {
-        return lineItemList;
-    }
+  public String getCustomerName() {
+    return cName;
+  }
 
-    String getOrderInfo() {
-        StringBuilder output = new StringBuilder();
+  public String getCustomerAddress() {
+    return addr;
+  }
 
-        // print headers
-        output.append("======Printing Orders======\n");
+  public List<LineItem> getLineItems() {
+    return lineItemList;
+  }
 
-        output.append(getCustomerName());
-        output.append(getCustomerAddress());
+  String getOrderInfo() {
+    StringBuilder output = new StringBuilder();
+    buildOrderHeader(output);
+    // prints lineItems
+    buildLineItemInfo(output);
+    buildOrderFooter(output);
+    return output.toString();
+  }
 
+  private void buildOrderFooter(StringBuilder output) {
+    // prints the state tax
+    output.append("Sales Tax").append('\t').append(totSalesTx);
+    // print total amount
+    output.append("Total Amount").append('\t').append(tot);
+  }
 
-        // prints lineItems
+  private void buildLineItemInfo(StringBuilder output) {
+    getLineItems().forEach(this::countLineStatus);
+    output.append(lineInfos);
+  }
 
-        for (LineItem lineItem : getLineItems()) {
-            lineInfos+=lineItem.getLineInfo();
-            // calculate sales tax @ rate of 10%
-            double salesTax = lineItem.getSalesTax();
-            totSalesTx += salesTax;
-            // calculate total amount of lineItem = price * quantity + 10 % sales tax
-            tot += lineItem.totalAmount() + salesTax;
-        }
-        output.append(lineInfos);
+  private void buildOrderHeader(StringBuilder output) {
+    // print headers
+    output.append("======Printing Orders======\n");
 
-        // prints the state tax
-        output.append("Sales Tax").append('\t').append(totSalesTx);
-        // print total amount
-        output.append("Total Amount").append('\t').append(tot);
-        return output.toString();
-    }
+    output.append(getCustomerName());
+    output.append(getCustomerAddress());
+  }
+
+  private void countLineStatus(LineItem lineItem) {
+    lineInfos += lineItem.getLineInfo();
+    // calculate sales tax @ rate of 10%
+    double salesTax = lineItem.getSalesTax();
+    totSalesTx += salesTax;
+    // calculate total amount of lineItem = price * quantity + 10 % sales tax
+    tot += lineItem.totalAmount() + salesTax;
+  }
 }
