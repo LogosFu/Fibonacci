@@ -12,4 +12,18 @@ class FibonacciTest {
     assertThat(fibonacciNumber).isEqualTo(1);
   }
 
+  @Test
+  void should_return_1_when_calculate_given_index_2() {
+    final Fibonacci fibonacci = new Fibonacci();
+    final int fibonacciNumber = fibonacci.calculate(2);
+    assertThat(fibonacciNumber).isEqualTo(1);
+  }
+
+  @Test
+  void should_return_2_when_calculate_given_index_3() {
+    final Fibonacci fibonacci = new Fibonacci();
+    final int fibonacciNumber = fibonacci.calculate(3);
+    assertThat(fibonacciNumber).isEqualTo(2);
+  }
+
 }
