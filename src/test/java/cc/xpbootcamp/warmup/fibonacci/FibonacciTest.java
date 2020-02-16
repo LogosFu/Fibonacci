@@ -1,10 +1,24 @@
 package cc.xpbootcamp.warmup.fibonacci;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.junit.jupiter.api.Test;
 
 class FibonacciTest {
+
+  @Test
+  void should_return_out_of_range_when_calculate_given_index_0() {
+    final Fibonacci fibonacci = new Fibonacci();
+    assertThatExceptionOfType(OutOfRangeException.class).isThrownBy(() -> fibonacci.calculate(0));
+  }
+
+  @Test
+  void should_return_out_of_range_when_calculate_given_index_51() {
+    final Fibonacci fibonacci = new Fibonacci();
+    assertThatExceptionOfType(OutOfRangeException.class).isThrownBy(() -> fibonacci.calculate(51));
+  }
+
   @Test
   void should_return_1_when_calculate_given_index_1() {
     final Fibonacci fibonacci = new Fibonacci();
