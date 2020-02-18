@@ -1,70 +1,77 @@
 package cc.xpbootcamp.warmup.cashier;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import lombok.Data;
+
+@Data
 
 public class Order {
 
   String cName;
   String addr;
+  LocalDate date;
   List<LineItem> lineItemList;
 
   private double totSalesTx = 0d;
   private double tot = 0d;
-  private String lineInfos = "";
 
-  public Order(String cName, String addr, List<LineItem> lineItemList) {
+  public Order(String cName, String addr, LocalDate date, List<LineItem> lineItemList) {
     this.cName = cName;
     this.addr = addr;
     this.lineItemList = lineItemList;
-  }
-
-  public String getCustomerName() {
-    return cName;
-  }
-
-  public String getCustomerAddress() {
-    return addr;
-  }
-
-  public List<LineItem> getLineItems() {
-    return lineItemList;
+    this.date = date;
   }
 
   String getOrderInfo() {
-    StringBuilder output = new StringBuilder();
-    buildOrderHeader(output);
-    // prints lineItems
-    buildLineItemInfo(output);
-    buildOrderFooter(output);
-    return output.toString();
+    settlement();
+    return buildOrderHeader()
+        + "\n"
+        + buildLineItemInfo()
+        + "\n"
+        + buildOrderFooter();
   }
 
-  private void buildOrderFooter(StringBuilder output) {
+  private String buildOrderHeader() {
+    return "====老王超市，值得信赖====\n"+formatDate();
+  }
+
+  private String buildOrderFooter() {
     // prints the state tax
-    output.append("Sales Tax").append('\t').append(totSalesTx);
-    // print total amount
-    output.append("Total Amount").append('\t').append(tot);
+    return "Sales Tax" + '\t' + totSalesTx
+        + "Total Amount" + '\t' + tot;
   }
 
-  private void buildLineItemInfo(StringBuilder output) {
-    getLineItems().forEach(this::countLineStatus);
-    output.append(lineInfos);
+  private String buildLineItemInfo() {
+
+    return lineItemList.stream().map(LineItem::getLineInfo)
+        .collect(Collectors.joining("\n"));
   }
 
-  private void buildOrderHeader(StringBuilder output) {
-    // print headers
-    output.append("======Printing Orders======\n");
-
-    output.append(getCustomerName());
-    output.append(getCustomerAddress());
+  private void settlement() {
+    lineItemList.forEach(this::countLineStatus);
   }
 
   private void countLineStatus(LineItem lineItem) {
-    lineInfos += lineItem.getLineInfo();
-    // calculate sales tax @ rate of 10%
-    double salesTax = lineItem.getSalesTax();
-    totSalesTx += salesTax;
-    // calculate total amount of lineItem = price * quantity + 10 % sales tax
-    tot += lineItem.totalAmount() + salesTax;
+    totSalesTx += lineItem.getSalesTax();
+    tot += lineItem.totalAmount() + lineItem.getSalesTax();
   }
+
+  private String formatDate() {
+    return date.format(DateTimeFormatter.ofPattern("yyyy年M月dd日")) + "，星期"+ getWeekOfDay();
+  }
+
+  private String getWeekOfDay() {
+    String[][] strArray = {{"MONDAY", "一"}, {"TUESDAY", "二"}, {"WEDNESDAY", "三"}, {"THURSDAY", "四"},
+        {"FRIDAY", "五"}, {"SATURDAY", "六"}, {"SUNDAY", "日"}};
+    final Optional<String[]> matchDay = Arrays.stream(strArray)
+        .filter(string -> String.valueOf(date.getDayOfWeek()).equals(string[0])).findAny();
+    return matchDay.map(strings -> strings[1]).orElseThrow(RuntimeException::new);
+  }
+
+
 }
